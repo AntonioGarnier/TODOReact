@@ -1,0 +1,3 @@
+export const ADD_NEW_TASK = 'ADD_NEW_TASK'
+export const MARK_TASK_AS_DONE = 'MARK_TASK_AS_DONE'
+export const REMOVE_ALL_TASKS = 'REMOVE_ALL_TASKS'

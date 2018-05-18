@@ -1,0 +1,26 @@
+.taskDone {
+    text-decoration: line-through;
+}
+
+.checkBoxStyle {
+    margin-left: 10px;
+}
+
+.task-enter {
+    opacity: 0.1;
+    transition: all 500ms ease-out;  
+  }
+  
+.task-enter-active {
+    opacity: 0.5;
+    transition: all 500ms ease-out;
+}
+
+.task-exit {
+    opacity: 1;
+}
+
+.task-exit-active {
+    opacity: 0.1;
+    transition: all 500ms ease-out;
+}

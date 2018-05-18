@@ -1,0 +1,43 @@
+{
+	// See http://go.microsoft.com/fwlink/?LinkId=827846
+	// for the documentation about the extensions.json format
+	"recommendations": [
+		// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+		"2gua.rainbow-brackets",
+        "EQuimper.react-native-react-redux",
+        "EditorConfig.EditorConfig",
+        "IBM.output-colorizer",
+        "Orta.vscode-jest",
+        "PeterJausovec.vscode-docker",
+        "Shan.code-settings-sync",
+        "aaron-bond.better-comments",
+        "akamud.vscode-caniuse",
+        "bierner.color-info",
+        "bierner.markdown-preview-github-styles",
+        "christian-kohler.npm-intellisense",
+        "clinyong.vscode-css-modules",
+        "cssho.vscode-svgviewer",
+        "dbaeumer.vscode-eslint",
+        "eamodio.gitlens",
+        "eg2.vscode-npm-script",
+        "flowtype.flow-for-vscode",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-rename-tag",
+        "formulahendry.code-runner",
+        "ionutvmi.path-autocomplete",
+        "kumar-harsh.graphql-for-vscode",
+        "leizongmin.node-module-intellisense",
+        "mhmadhamster.postcss-language",
+        "ms-vscode.sublime-keybindings",
+        "naumovs.color-highlight",
+        "pflannery.vscode-versionlens",
+        "redhat.vscode-yaml",
+        "shinnn.stylelint",
+        "sysoev.language-stylus",
+        "waderyan.gitblame",
+        "wayou.vscode-todo-highlight",
+        "wix.vscode-import-cost",
+        "xabikos.JavaScriptSnippets",
+        "xyz.local-history"
+	]
+}
