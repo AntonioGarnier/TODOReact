@@ -38,9 +38,7 @@ function List({
                                 unmountOnExit
                                 mountOnEnter
                             >
-                                <li
-                                    className={task.get('done') ? 'taskDone' : null}
-                                >
+                                <li>
                                     {task.get('task')}
                                     <input
                                         className="checkBoxStyle"

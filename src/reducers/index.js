@@ -4,6 +4,7 @@ import {
     GOT_NEW_TASK,
     MARK_TASK_AS_DONE,
     REMOVE_ALL_TASKS,
+    INITIALIZE_APP,
 } from '../constants'
 
 
@@ -26,9 +27,11 @@ export const rootReducer = (state = initialState, action) => {
                     id: action.payload.taskId,
                 })))
         case MARK_TASK_AS_DONE:
-            return state.setIn(['tasks', action.payload.taskId, 'done'], true)
+            return state.setIn(['tasks', state.get('tasks').findIndex(i => i.get('id') === action.payload.taskId), 'done'], true)
         case REMOVE_ALL_TASKS:
             return initialState
+        case INITIALIZE_APP:
+            return state
         default:
             return state
     }

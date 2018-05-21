@@ -4,6 +4,7 @@ import {
     GOT_NEW_TASK,
     MARK_TASK_AS_DONE,
     REMOVE_ALL_TASKS,
+    INITIALIZE_APP,
 } from '../constants'
 
 
@@ -62,5 +63,11 @@ export function markTaskAsDone(taskId) {
 export function removeAllTasks() {
     return {
         type: REMOVE_ALL_TASKS,
+    }
+}
+
+export function initializeApp() {
+    return {
+        type: INITIALIZE_APP,
     }
 }

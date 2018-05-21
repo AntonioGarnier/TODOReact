@@ -7,7 +7,6 @@ const db = firebase.firestore()
 let newTaskRef
 
 const addTaskToFirebase = store => next => (action) => {
-    // console.log('middleware')
     switch (action.type) {
         case ADD_NEW_TASK:
             newTaskRef = db.collection('tasks').doc()

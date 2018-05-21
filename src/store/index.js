@@ -5,6 +5,7 @@ import Immutable from 'immutable'
 import { saveState, loadState } from '../localStorage'
 import { rootReducer } from '../reducers'
 import addTaskToFirebase from './middlewares'
+import { initializeApp } from '../actions'
 
 
 const initialState = loadState() || Immutable.Map({
@@ -32,6 +33,8 @@ export const store = createStore(
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
     ), */
 )
+
+store.dispatch(initializeApp())
 
 store.subscribe(() => {
     saveState(store.getState())
