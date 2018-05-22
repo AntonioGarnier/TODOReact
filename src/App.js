@@ -1,13 +1,18 @@
+import 'rxjs/add/operator/delay'
+import 'rxjs/add/observable/interval'
+import 'rxjs/add/operator/take'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import PropTypes from 'prop-types'
+import { Observable } from 'rxjs'
 import List from './components/List'
 import './App.css'
 import {
     addNewTask,
     removeAllTasks,
 } from './actions'
+import observerAction from './observer'
 
 
 const mapDispatchToProps = (dispatch) => {
@@ -34,12 +39,42 @@ class App extends Component {
         inputValue: '',
     }
 
+    /* .create((obs) => {
+                this.handleAddNewTask = () => {
+                    const { inputValue } = this.state
+                    if (/\S/.test(inputValue)) {
+                        this.setState({
+                            inputValue: '',
+                        })
+                        obs.next(inputValue)
+                    }
+                }
+            }) */
+    // .delay(2000)
+
     componentDidMount() {
         window.addEventListener('storage', this.handleOnStorageUpdate)
+
+        this.observable$ = Observable.create((obs) => {
+            this.handleAddNewTask = () => {
+                const { inputValue } = this.state
+                if (/\S/.test(inputValue)) {
+                    this.setState({
+                        inputValue: '',
+                    })
+                    obs.next(inputValue)
+                }
+            }
+        })
+
+
+        this.subscription = this.observable$
+            .subscribe(observerAction(this.props.addNewTask))
     }
 
     componentWillUnmount() {
         window.removeEventListener('storage', this.handleOnStorageUpdate)
+        this.subscription.unsubscribe()
     }
 
     isValidInput = () => {
@@ -54,7 +89,7 @@ class App extends Component {
         })
     }
 
-    handleAddNewTask = () => {
+    /* handleAddNewTask = () => {
         const { inputValue } = this.state
 
         if (/\S/.test(inputValue)) {
@@ -63,7 +98,7 @@ class App extends Component {
                 inputValue: '',
             })
         }
-    }
+    } */
 
     render() {
         return (

@@ -1,6 +1,4 @@
 import { createStore, compose, applyMiddleware } from 'redux'
-import logger from 'redux-logger'
-import thunk from 'redux-thunk'
 import Immutable from 'immutable'
 import { saveState, loadState } from '../localStorage'
 import { rootReducer } from '../reducers'
@@ -20,7 +18,7 @@ const composeEnhancers =
         // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
         }) : compose
 
-const enhancer = composeEnhancers(applyMiddleware(logger, addTaskToFirebase))
+const enhancer = composeEnhancers(applyMiddleware(addTaskToFirebase))
 
 export const lol = ''
 export const store = createStore(

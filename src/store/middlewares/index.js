@@ -1,15 +1,17 @@
+import 'firebase/firestore'
 import firebase from '../../firebase'
 import { gotNewTask } from '../../actions'
 import { ADD_NEW_TASK } from '../../constants'
 
 
-const db = firebase.firestore()
+const firestore = firebase.firestore()
+firestore.settings({ timestampsInSnapshots: true })
 let newTaskRef
 
 const addTaskToFirebase = store => next => (action) => {
     switch (action.type) {
         case ADD_NEW_TASK:
-            newTaskRef = db.collection('tasks').doc()
+            newTaskRef = firestore.collection('tasks').doc()
             newTaskRef.set({
                 task: action.payload.task,
                 done: false,

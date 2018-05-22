@@ -16,7 +16,6 @@ export const initialState = Immutable.Map({
 export const rootReducer = (state = initialState, action) => {
     switch (action.type) {
         case ADD_NEW_TASK:
-            console.log('reducer')
             return state.set('loading', true)
         case GOT_NEW_TASK:
             return state
