@@ -1,14 +1,20 @@
-// import firebase from '../firebase'
 import {
     ADD_NEW_TASK,
     GOT_NEW_TASK,
     MARK_TASK_AS_DONE,
     REMOVE_ALL_TASKS,
     INITIALIZE_APP,
+    ADD_NEW_TASK_CANCELLED,
 } from '../constants'
 
 
 // const db = firebase.firestore()
+
+export function cancelAddNewTask() {
+    return {
+        type: ADD_NEW_TASK_CANCELLED,
+    }
+}
 
 export function addNewTask(task) {
     return {
@@ -18,28 +24,6 @@ export function addNewTask(task) {
         },
     }
 }
-
-/* export function addNewTask(task) {
-    return (dispatch) => {
-        dispatch({
-            type: ADD_NEW_TASK,
-            payload: {
-                task,
-            },
-        })
-        const newTaskRef = db.collection('tasks').doc()
-        newTaskRef.set({
-            task,
-            done: false,
-            id: newTaskRef.id,
-        }).then(() => {
-            dispatch(gotNewTask(task, newTaskRef.id))
-        }).catch(error => (
-            // eslint-disable-next-line no-console
-            console.log('Error saving task in database: ', error)
-        ))
-    }
-} */
 
 export function gotNewTask(task, taskId) {
     return {

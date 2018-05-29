@@ -1,24 +1,21 @@
-import 'rxjs/add/operator/delay'
-import 'rxjs/add/observable/interval'
-import 'rxjs/add/operator/take'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import PropTypes from 'prop-types'
-import { Observable } from 'rxjs'
 import List from './components/List'
 import './App.css'
 import {
     addNewTask,
     removeAllTasks,
+    cancelAddNewTask,
 } from './actions'
-import observerAction from './observer'
 
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         addNewTask,
         removeAllTasks,
+        cancelAddNewTask,
     }, dispatch)
 }
 
@@ -32,6 +29,7 @@ class App extends Component {
     static propTypes = {
         addNewTask: PropTypes.func.isRequired,
         removeAllTasks: PropTypes.func.isRequired,
+        cancelAddNewTask: PropTypes.func.isRequired,
         loading: PropTypes.bool.isRequired,
     }
 
@@ -39,42 +37,22 @@ class App extends Component {
         inputValue: '',
     }
 
-    /* .create((obs) => {
-                this.handleAddNewTask = () => {
-                    const { inputValue } = this.state
-                    if (/\S/.test(inputValue)) {
-                        this.setState({
-                            inputValue: '',
-                        })
-                        obs.next(inputValue)
-                    }
-                }
-            }) */
-    // .delay(2000)
-
     componentDidMount() {
         window.addEventListener('storage', this.handleOnStorageUpdate)
-
-        this.observable$ = Observable.create((obs) => {
-            this.handleAddNewTask = () => {
-                const { inputValue } = this.state
-                if (/\S/.test(inputValue)) {
-                    this.setState({
-                        inputValue: '',
-                    })
-                    obs.next(inputValue)
-                }
-            }
-        })
-
-
-        this.subscription = this.observable$
-            .subscribe(observerAction(this.props.addNewTask))
     }
 
     componentWillUnmount() {
         window.removeEventListener('storage', this.handleOnStorageUpdate)
-        this.subscription.unsubscribe()
+    }
+
+    handleAddNewTask = () => {
+        const { inputValue } = this.state
+        if (/\S/.test(inputValue)) {
+            this.props.addNewTask(inputValue)
+            this.setState({
+                inputValue: '',
+            })
+        }
     }
 
     isValidInput = () => {
@@ -89,16 +67,9 @@ class App extends Component {
         })
     }
 
-    /* handleAddNewTask = () => {
-        const { inputValue } = this.state
-
-        if (/\S/.test(inputValue)) {
-            this.props.addNewTask(inputValue)
-            this.setState({
-                inputValue: '',
-            })
-        }
-    } */
+    handleCancel = () => {
+        this.props.cancelAddNewTask()
+    }
 
     render() {
         return (
@@ -124,6 +95,12 @@ class App extends Component {
                     onClick={this.props.removeAllTasks}
                 >
                     Clear list
+                </button>
+                <button
+                    type="submit"
+                    onClick={this.handleCancel}
+                >
+                    Cancel
                 </button>
             </div>
         )

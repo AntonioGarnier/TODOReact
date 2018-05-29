@@ -22,8 +22,10 @@ export const removeState = () => {
 }
 
 export const saveState = (state) => {
+    console.log(state.toJS())
+    const statejs = state.toJS()
     try {
-        const serializedData = JSON.stringify(state.toJS())
+        const serializedData = JSON.stringify(statejs)
         localStorage.setItem('state', serializedData)
     } catch (error) {
         console.log(`Error al guardar el State - Message: ${error}`)
