@@ -1,17 +1,23 @@
 import { createStore, compose, applyMiddleware } from 'redux'
-import { createEpicMiddleware } from 'redux-observable'
+import { createEpicMiddleware, combineEpics } from 'redux-observable'
 import Immutable from 'immutable'
 import { saveState, loadState } from '../localStorage'
 import { rootReducer } from '../reducers'
 // import addTaskToFirebase from './middlewares'
 import { initializeApp } from '../actions'
-import addTaskToFirebaseEpic from './epics'
+import {
+    addTaskToFirebaseEpic,
+    fetchTasksFromFirebase,
+    initialzeApp,
+} from './epics'
 
 
 const initialState = loadState() || Immutable.Map({
     tasks: Immutable.List(),
     loading: false,
+    fetching: false,
 })
+
 const composeEnhancers =
     typeof window === 'object' &&
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?   
@@ -19,7 +25,13 @@ const composeEnhancers =
         // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
         }) : compose
 
-const epicMiddleware = createEpicMiddleware(addTaskToFirebaseEpic)
+const rootEpic = combineEpics(
+    addTaskToFirebaseEpic,
+    fetchTasksFromFirebase,
+    initialzeApp,
+)
+
+const epicMiddleware = createEpicMiddleware(rootEpic)
 
 const enhancer = composeEnhancers(applyMiddleware(epicMiddleware))
 

@@ -6,12 +6,15 @@ import {
     REMOVE_ALL_TASKS,
     INITIALIZE_APP,
     ADD_NEW_TASK_CANCELLED,
+    FETCH_TASKS_FROM_FIREBASE,
+    FETCHING_TASKS_FROM_FIREBASE,
 } from '../constants'
 
 
 export const initialState = Immutable.Map({
     tasks: Immutable.List(),
     loading: false,
+    fetching: false,
 })
 
 export const rootReducer = (state = initialState, action) => {
@@ -34,6 +37,12 @@ export const rootReducer = (state = initialState, action) => {
             return initialState
         case INITIALIZE_APP:
             return state
+        case FETCHING_TASKS_FROM_FIREBASE:
+            return state.set('fetching', true)
+        case FETCH_TASKS_FROM_FIREBASE:
+            return state
+                .set('fetching', false)
+                .set('tasks', action.payload.tasks)
         default:
             return state
     }

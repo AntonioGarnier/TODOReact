@@ -5,10 +5,22 @@ import {
     REMOVE_ALL_TASKS,
     INITIALIZE_APP,
     ADD_NEW_TASK_CANCELLED,
+    FETCH_TASKS_FROM_FIREBASE,
+    FETCHING_TASKS_FROM_FIREBASE,
 } from '../constants'
 
 
-// const db = firebase.firestore()
+export function fetchTasksFromFirebase() {
+    return {
+        type: FETCH_TASKS_FROM_FIREBASE,
+    }
+}
+
+export function fetchingTasksFromFirebase() {
+    return {
+        type: FETCHING_TASKS_FROM_FIREBASE,
+    }
+}
 
 export function cancelAddNewTask() {
     return {

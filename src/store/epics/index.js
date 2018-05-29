@@ -1,4 +1,5 @@
 import 'firebase/firestore'
+import Immutable from 'immutable'
 import { ofType } from 'redux-observable'
 import { interval } from 'rxjs'
 import {
@@ -13,13 +14,79 @@ import {
     ADD_NEW_TASK,
     GOT_NEW_TASK,
     ADD_NEW_TASK_CANCELLED,
+    FETCH_TASKS_FROM_FIREBASE,
+    FETCHING_TASKS_FROM_FIREBASE,
+    INITIALIZE_APP,
 } from '../../constants'
 
 
 const firestore = firebase.firestore()
 firestore.settings({ timestampsInSnapshots: true })
 
-const addTaskToFirebaseEpic = action$ =>
+
+/* firestore.collection('tasks').get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, ' => ', doc.data())
+    })
+}) */
+/* firestore
+    .collection('tasks')
+    .doc('SF')
+    .get()
+    .then((doc) => {
+        if (doc.exists) {
+            console.log('Document data:', doc.data())
+        } else {
+            // doc.data() will be undefined in this case
+            console.log('No such document!')
+        }
+    })
+    .catch((error) => {
+        console.log('Error getting document:', error);
+    })
+*/
+
+export const initialzeApp = action$ =>
+    action$.pipe(
+        ofType(INITIALIZE_APP),
+        map(() => (
+            {
+                type: FETCHING_TASKS_FROM_FIREBASE,
+            }
+        ))
+    )
+
+export const fetchTasksFromFirebase = action$ =>
+    action$.pipe(
+        ofType(FETCHING_TASKS_FROM_FIREBASE),
+        map(() => {
+            // console.log('**', tasks.toJS())
+            let tasks = Immutable.List()
+            firestore.collection('tasks').get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    // console.log(doc.id, ' => ', doc.data())
+                    tasks = tasks.push(Immutable.Map({
+                        task: doc.data().task,
+                        done: doc.data().done,
+                        taskId: doc.id,
+                    }))
+                    // console.log('inside', tasks.toJS())
+                    // doc.data() is never undefined for query doc snapshots
+                })
+                console.log('tareas', tasks.toJS())
+            })
+            return {
+                type: FETCH_TASKS_FROM_FIREBASE,
+                payload: {
+                    tasks,
+                },
+            }
+        }),
+        tap(v => console.log('out', v))
+    )
+
+export const addTaskToFirebaseEpic = action$ =>
     action$.pipe(
         ofType(ADD_NEW_TASK),
         tap(v => console.log('Hey, lets go to add new task:', v.payload.task)),
@@ -33,7 +100,6 @@ const addTaskToFirebaseEpic = action$ =>
                     newTaskRef.set({
                         task: `${action.payload.task} ${act}`,
                         done: false,
-                        id: newTaskRef.id,
                     })
                     return {
                         type: GOT_NEW_TASK,
@@ -71,4 +137,3 @@ const addTaskToFirebaseEpic = action$ =>
         takeUntil(action$.ofType(ADD_NEW_TASK_CANCELLED)), */
     )
 
-export default addTaskToFirebaseEpic

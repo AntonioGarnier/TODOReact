@@ -22,6 +22,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
     return {
         loading: state.get('loading'),
+        fetching: state.get('fetching'),
     }
 }
 
@@ -31,6 +32,7 @@ class App extends Component {
         removeAllTasks: PropTypes.func.isRequired,
         cancelAddNewTask: PropTypes.func.isRequired,
         loading: PropTypes.bool.isRequired,
+        fetching: PropTypes.bool.isRequired,
     }
 
     state = {
@@ -102,6 +104,11 @@ class App extends Component {
                 >
                     Cancel
                 </button>
+                {
+                    this.props.fetching
+                        ? <div><div className="loader" /><p>Fetching data</p></div>
+                        : null
+                }
             </div>
         )
     }
