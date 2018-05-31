@@ -45,6 +45,15 @@ firestore.settings({ timestampsInSnapshots: true })
     .catch((error) => {
         console.log('Error getting document:', error);
     })
+
+
+    return {
+                type: FETCH_TASKS_FROM_FIREBASE,
+                payload: {
+                    tasks,
+                },
+            }
+
 */
 
 export const initialzeApp = action$ =>
@@ -60,29 +69,24 @@ export const initialzeApp = action$ =>
 export const fetchTasksFromFirebase = action$ =>
     action$.pipe(
         ofType(FETCHING_TASKS_FROM_FIREBASE),
-        map(() => {
-            // console.log('**', tasks.toJS())
-            let tasks = Immutable.List()
+        flatMap(() => (
             firestore.collection('tasks').get().then((querySnapshot) => {
+                let tasks = Immutable.List()
                 querySnapshot.forEach((doc) => {
-                    // console.log(doc.id, ' => ', doc.data())
                     tasks = tasks.push(Immutable.Map({
                         task: doc.data().task,
                         done: doc.data().done,
-                        taskId: doc.id,
+                        id: doc.id,
                     }))
-                    // console.log('inside', tasks.toJS())
-                    // doc.data() is never undefined for query doc snapshots
                 })
-                console.log('tareas', tasks.toJS())
+                return {
+                    type: FETCH_TASKS_FROM_FIREBASE,
+                    payload: {
+                        tasks,
+                    },
+                }
             })
-            return {
-                type: FETCH_TASKS_FROM_FIREBASE,
-                payload: {
-                    tasks,
-                },
-            }
-        }),
+        )),
         tap(v => console.log('out', v))
     )
 
