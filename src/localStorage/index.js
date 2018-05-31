@@ -22,7 +22,6 @@ export const removeState = () => {
 }
 
 export const saveState = (state) => {
-    console.log(state.toJS())
     const statejs = state.toJS()
     try {
         const serializedData = JSON.stringify(statejs)

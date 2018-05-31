@@ -7,8 +7,22 @@ import {
     ADD_NEW_TASK_CANCELLED,
     FETCH_TASKS_FROM_FIREBASE,
     FETCHING_TASKS_FROM_FIREBASE,
+    TEST1,
+    TEST2,
 } from '../constants'
 
+
+export function test1() {
+    return {
+        type: TEST1,
+    }
+}
+
+export function test2() {
+    return {
+        type: TEST2,
+    }
+}
 
 export function fetchTasksFromFirebase() {
     return {
