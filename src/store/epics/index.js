@@ -17,6 +17,9 @@ import {
     FETCH_TASKS_FROM_FIREBASE,
     FETCHING_TASKS_FROM_FIREBASE,
     INITIALIZE_APP,
+    REMOVE_ALL_TASKS,
+    REMOVE_TASK,
+    UPDATE_TASK,
     // TEST1,
     // TEST2,
 } from '../../constants'
@@ -29,17 +32,37 @@ const tasksListener$ = new Subject()
 
 firestore.collection('tasks')
     .onSnapshot((querySnapshot) => {
-        // console.log('Current data: ', querySnapshot.docChanges())
-        let tasks = Immutable.List()
-        querySnapshot.docChanges().forEach((task) => {
-            tasks = tasks.push(Immutable.Map({
-                task: task.doc.data().task,
-                done: task.doc.data().done,
-                id: task.doc.id,
-            }))
-            // console.log('Current data2: ', task.doc.data())
-        })
-        tasksListener$.next(tasks)
+        // console.log('From?: ', querySnapshot.docChanges())
+        if (!querySnapshot.metadata.hasPendingWrites) {
+            let tasks = Immutable.List()
+            let updateType
+            querySnapshot.docChanges().forEach((task) => {
+                // console.log('tipo de tarea', task.type)
+                tasks = tasks.push(Immutable.Map({
+                    task: task.doc.data().task,
+                    done: task.doc.data().done,
+                    id: task.doc.id,
+                }))
+                switch (task.type) {
+                    case 'added':
+                        updateType = 'added'
+                        break
+                    case 'modified':
+                        updateType = 'modified'
+                        break
+                    case 'removed':
+                        updateType = 'removed'
+                        break
+                    default:
+                        break
+                }
+                // console.log('Current data2: ', task.doc.data())
+            })
+            tasksListener$.next({
+                tasks,
+                updateType,
+            })
+        }
     })
 
 
@@ -62,7 +85,6 @@ of(firestore.collection('tasks')
                             done: task.doc.data().done,
                             id: task.doc.id,
                         }))
-                        console.log('Current data2: ', task.doc.data(), 'id: ', task.doc.id, 'tasks: ', tasks.toJS())
                     })
                     if (querySnapshot.docChanges().length > 1)
                         return {
@@ -80,31 +102,7 @@ of(firestore.collection('tasks')
                 })).pipe(tap(v => console.log('!!!!!!!', v)))
 */
 
-
-export const initialzeApp = action$ =>
-    action$.pipe(
-        ofType(INITIALIZE_APP),
-        flatMap(() => (
-            tasksListener$.pipe(
-                // tap(v => console.log('primero: ', v)),
-                map((task) => {
-                    if (task.size > 1)
-                        return {
-                            type: FETCH_TASKS_FROM_FIREBASE,
-                            payload: task,
-                        }
-                    return {
-                        type: GOT_NEW_TASK,
-                        payload: {
-                            task: task.get(0).get('task'),
-                            done: task.get(0).get('done'),
-                            taskId: task.get(0).get('id'),
-                        },
-                    }
-                }),
-                // tap(v => console.log('heya: ', v))
-            )
-            /* tasksListener$.subscribe({
+/* tasksListener$.subscribe({
                 next: (value) => {
                     if (value.size > 1)
                         return {
@@ -128,7 +126,7 @@ export const initialzeApp = action$ =>
                 },
             }) */
 
-            /* of(firestore.collection('tasks')
+    /* of(firestore.collection('tasks')
                 .onSnapshot((querySnapshot) => {
                     let tasks = Immutable.List()
                     console.log('Current data: ', querySnapshot.docChanges().length)
@@ -138,7 +136,6 @@ export const initialzeApp = action$ =>
                             done: task.doc.data().done,
                             id: task.doc.id,
                         }))
-                        console.log('Current data2: ', task.doc.data(), 'id: ', task.doc.id, 'tasks: ', tasks.toJS())
                     })
                     if (querySnapshot.docChanges().length > 1)
                         return {
@@ -155,7 +152,7 @@ export const initialzeApp = action$ =>
                     }
                 })).pipe(tap(v => console.log(v))) */
 
-            /* of(
+    /* of(
                 {
                     type: FETCHING_TASKS_FROM_FIREBASE,
                 },
@@ -165,9 +162,54 @@ export const initialzeApp = action$ =>
                 {
                     type: TEST2,
                 },
-            ) */ 
-        )),
-        // tap(v => console.log('out', v))
+            ) */
+
+export const initialzeApp = action$ =>
+    action$.pipe(
+        ofType(INITIALIZE_APP),
+        flatMap(() => (
+            tasksListener$.pipe(
+                tap(v => console.log('Primero: ', v)),
+                map(({ tasks, updateType }) => {
+                    console.log('tareita', tasks, 'updatetype: ', updateType)
+                    switch (updateType) {
+                        case 'added':
+                            if (tasks.size > 1)
+                                return {
+                                    type: FETCH_TASKS_FROM_FIREBASE,
+                                    payload: tasks,
+                                }
+                            return {
+                                type: GOT_NEW_TASK,
+                                payload: {
+                                    task: tasks.get(0).get('task'),
+                                    done: tasks.get(0).get('done'),
+                                    taskId: tasks.get(0).get('id'),
+                                },
+                            }
+                        case 'modified':
+                            return {
+                                type: UPDATE_TASK,
+                                payload: {
+                                    tasks,
+                                },
+                            }
+                        case 'removed':
+                            if (tasks.size > 1)
+                                return {
+                                    type: REMOVE_ALL_TASKS,
+                                }
+                            return {
+                                type: REMOVE_TASK,
+                                payload: {
+                                    taskId: tasks.get(0).get('id'),
+                                },
+                            }
+                        default:
+                            break
+                    }
+                })
+            ))),
     )
 
 export const fetchTasksFromFirebase = action$ =>
