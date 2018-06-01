@@ -1,14 +1,13 @@
 import 'firebase/firestore'
 import Immutable from 'immutable'
 import { ofType } from 'redux-observable'
-import { interval, of } from 'rxjs'
+import { interval, Subject } from 'rxjs'
 import {
     map,
     take,
     flatMap,
     tap,
     takeUntil,
-    from,
 } from 'rxjs/operators'
 import firebase from '../../firebase'
 import {
@@ -18,27 +17,145 @@ import {
     FETCH_TASKS_FROM_FIREBASE,
     FETCHING_TASKS_FROM_FIREBASE,
     INITIALIZE_APP,
-    TEST1,
-    TEST2,
+    // TEST1,
+    // TEST2,
 } from '../../constants'
 
 
 const firestore = firebase.firestore()
 firestore.settings({ timestampsInSnapshots: true })
 
+const tasksListener$ = new Subject()
+
 firestore.collection('tasks')
+    .onSnapshot((querySnapshot) => {
+        // console.log('Current data: ', querySnapshot.docChanges())
+        let tasks = Immutable.List()
+        querySnapshot.docChanges().forEach((task) => {
+            tasks = tasks.push(Immutable.Map({
+                task: task.doc.data().task,
+                done: task.doc.data().done,
+                id: task.doc.id,
+            }))
+            // console.log('Current data2: ', task.doc.data())
+        })
+        tasksListener$.next(tasks)
+    })
+
+
+/* firestore.collection('tasks')
     .onSnapshot((querySnapshot) => {
         console.log('Current data: ', querySnapshot.docChanges())
         querySnapshot.docChanges().forEach((doc2) => {
             console.log('Current data2: ', doc2.doc.data())
         })
-    })
+    }) */
+
+/*
+of(firestore.collection('tasks')
+                .onSnapshot((querySnapshot) => {
+                    let tasks = Immutable.List()
+                    console.log('Current data: ', querySnapshot.docChanges().length)
+                    querySnapshot.docChanges().forEach((task) => {
+                        tasks = tasks.push(Immutable.Map({
+                            task: task.doc.data().task,
+                            done: task.doc.data().done,
+                            id: task.doc.id,
+                        }))
+                        console.log('Current data2: ', task.doc.data(), 'id: ', task.doc.id, 'tasks: ', tasks.toJS())
+                    })
+                    if (querySnapshot.docChanges().length > 1)
+                        return {
+                            type: FETCH_TASKS_FROM_FIREBASE,
+                            payload: tasks,
+                        }
+                    return {
+                        type: GOT_NEW_TASK,
+                        payload: {
+                            task: tasks.get(0).get('task'),
+                            done: tasks.get(0).get('done'),
+                            taskId: tasks.get(0).get('id'),
+                        },
+                    }
+                })).pipe(tap(v => console.log('!!!!!!!', v)))
+*/
+
 
 export const initialzeApp = action$ =>
     action$.pipe(
         ofType(INITIALIZE_APP),
         flatMap(() => (
-            of(
+            tasksListener$.pipe(
+                // tap(v => console.log('primero: ', v)),
+                map((task) => {
+                    if (task.size > 1)
+                        return {
+                            type: FETCH_TASKS_FROM_FIREBASE,
+                            payload: task,
+                        }
+                    return {
+                        type: GOT_NEW_TASK,
+                        payload: {
+                            task: task.get(0).get('task'),
+                            done: task.get(0).get('done'),
+                            taskId: task.get(0).get('id'),
+                        },
+                    }
+                }),
+                // tap(v => console.log('heya: ', v))
+            )
+            /* tasksListener$.subscribe({
+                next: (value) => {
+                    if (value.size > 1)
+                        return {
+                            type: FETCH_TASKS_FROM_FIREBASE,
+                            payload: value,
+                        }
+                    return {
+                        type: GOT_NEW_TASK,
+                        payload: {
+                            task: value.get(0).get('task'),
+                            done: value.get(0).get('done'),
+                            taskId: value.get(0).get('id'),
+                        },
+                    }
+                },
+                error: (error) => {
+                    console.log(error)
+                },
+                complete: () => {
+                    console.log('Completed')
+                },
+            }) */
+
+            /* of(firestore.collection('tasks')
+                .onSnapshot((querySnapshot) => {
+                    let tasks = Immutable.List()
+                    console.log('Current data: ', querySnapshot.docChanges().length)
+                    querySnapshot.docChanges().forEach((task) => {
+                        tasks = tasks.push(Immutable.Map({
+                            task: task.doc.data().task,
+                            done: task.doc.data().done,
+                            id: task.doc.id,
+                        }))
+                        console.log('Current data2: ', task.doc.data(), 'id: ', task.doc.id, 'tasks: ', tasks.toJS())
+                    })
+                    if (querySnapshot.docChanges().length > 1)
+                        return {
+                            type: FETCH_TASKS_FROM_FIREBASE,
+                            payload: tasks,
+                        }
+                    return {
+                        type: GOT_NEW_TASK,
+                        payload: {
+                            task: tasks.get(0).get('task'),
+                            done: tasks.get(0).get('done'),
+                            taskId: tasks.get(0).get('id'),
+                        },
+                    }
+                })).pipe(tap(v => console.log(v))) */
+
+            /* of(
                 {
                     type: FETCHING_TASKS_FROM_FIREBASE,
                 },
@@ -48,8 +165,9 @@ export const initialzeApp = action$ =>
                 {
                     type: TEST2,
                 },
-            )
-        ))
+            ) */ 
+        )),
+        // tap(v => console.log('out', v))
     )
 
 export const fetchTasksFromFirebase = action$ =>
@@ -73,7 +191,6 @@ export const fetchTasksFromFirebase = action$ =>
                 }
             })
         )),
-        tap(v => console.log('out', v))
     )
 
 export const addTaskToFirebaseEpic = action$ =>

@@ -42,7 +42,7 @@ export const rootReducer = (state = initialState, action) => {
         case FETCH_TASKS_FROM_FIREBASE:
             return state
                 .set('fetching', false)
-                .set('tasks', action.payload.tasks)
+                .set('tasks', action.payload)
         default:
             return state
     }
