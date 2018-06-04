@@ -44,7 +44,6 @@ export const rootReducer = (state = initialState, action) => {
             return state
                 .deleteIn(['tasks', state.get('tasks').findIndex(i => i.get('id') === action.payload.taskId)])
         case UPDATE_TASK:
-            console.log('action: ', state.get('tasks').findIndex(i => i.get('id') === action.payload.tasks.get('0').get('id')))
             return state
                 .setIn(['tasks', state.get('tasks').findIndex(i => i.get('id') === action.payload.tasks.get('0').get('id'))], action.payload.tasks.get('0'))
         case INITIALIZE_APP:
