@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { markTaskAsDone } from '../../actions'
-import './styles.css'
+import styles from './styles.css'
 
 
 const mapDispatchToProps = (dispatch) => {
@@ -24,7 +24,7 @@ function List({
     markTaskAsDone, // eslint-disable-line no-shadow
 }) {
     return (
-        <div className="container-list" >
+        <div className={styles['container']} >
             <TransitionGroup component={null}>
                 {
                     tasks
@@ -34,20 +34,25 @@ function List({
                             <CSSTransition
                                 key={task.get('id')}
                                 timeout={500}
-                                classNames="task"
+                                classNames={{
+                                    enter: styles['task-enter'],
+                                    enterActive: styles['task-active-enter'],
+                                    exit: styles['task-exit'],
+                                    exitActive: styles['task-active-exit'],
+                                   }}
                                 appear
                                 unmountOnExit
                                 mountOnEnter
                             >
-                                <div className="content-list" >
-                                    <div className="btn-checkbox" >
+                                <div className={styles['content']} >
+                                    <div className={styles['btn-checkbox']} >
                                         <input
-                                            type="checkbox"
+                                            type='checkbox'
                                             defaultChecked={task.get('done')}
                                             onClick={() => markTaskAsDone(task.get('id'))}
                                         />
                                     </div>
-                                    <div className="added-task" >
+                                    <div className={styles['added-task']} >
                                         {task.get('task')}
                                     </div>
                                 </div>

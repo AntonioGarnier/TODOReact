@@ -19,34 +19,12 @@
     text-decoration: line-through;
 }
 
-
-.task-enter {
-    opacity: 0.1;
-    transition: all 500ms ease-out;  
-  }
-  
-.task-enter-active {
-    opacity: 0.5;
-    transition: all 500ms ease-out;
-}
-
-.task-exit {
-    opacity: 1;
-    text-decoration: line-through;
-}
-
-.task-exit-active {
-    opacity: 0.1;
-    transition: all 500ms ease-out;
-    text-decoration: line-through;
-}
-
-.container-list {
+.container {
 
     max-height: 610px;
     overflow: auto;
 
-    .content-list {
+    .content {
 
         display: grid;
         grid-template-columns: var(--checkWidth) calc((var(--inputWidth) - 3.8rem));

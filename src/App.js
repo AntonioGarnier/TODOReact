@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import PropTypes from 'prop-types'
 import List from './components/List'
-import './App.css'
+import styles from './App.css'
 import {
     addNewTask,
     removeAllTasks,
@@ -75,31 +75,31 @@ class App extends Component {
 
     render() {
         return (
-            <div className="container" >
-                <div className="layout-add-task" >
+            <div className={styles['container']} >
+                <div className={styles['layout-add-task']} >
                     <input
-                        className="text-field-input"
+                        className={styles['text-field-input']}
                         type="text"
                         placeholder="Add new task"
                         value={this.state.inputValue}
                         onChange={e => this.handleOnChange(e.target.value)}
                     />
                     <button
-                        className="btn-task"
+                        className={styles['btn-task']}
                         type="submit"
                         onClick={this.handleAddNewTask}
                     >
                         Add
                     </button>
                     <button
-                        className="btn-task"
+                        className={styles['btn-task']}
                         type="submit"
                         onClick={this.props.removeAllTasks}
                     >
                         Clear
                     </button>
                     <button
-                        className="btn-task"
+                        className={styles['btn-task']}
                         type="submit"
                         onClick={this.handleCancel}
                     >
@@ -108,13 +108,13 @@ class App extends Component {
                 </div>
                 {
                     this.props.fetching
-                        ? <div><div className="loader" /><p>Fetching data</p></div>
+                        ? <div><div className={styles['loader']} /><p>Fetching data</p></div>
                         : null
                 }
-                <List />
                 {
-                    this.props.loading ? <div className="loader" /> : null
+                    this.props.loading ? <div className={styles['loader']} /> : null
                 }
+                <List />
             </div>
         )
     }
