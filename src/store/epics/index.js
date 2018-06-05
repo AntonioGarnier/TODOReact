@@ -169,9 +169,9 @@ export const initialzeApp = action$ =>
         ofType(INITIALIZE_APP),
         flatMap(() => (
             tasksListener$.pipe(
-                tap(v => console.log('Primero: ', v)),
+                // tap(v => console.log('Primero: ', v)),
                 map(({ tasks, updateType }) => {
-                    console.log('tareita', tasks, 'updatetype: ', updateType)
+                    // console.log('tareita', tasks, 'updatetype: ', updateType)
                     switch (updateType) {
                         case 'added':
                             if (tasks.size > 1)

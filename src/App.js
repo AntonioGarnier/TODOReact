@@ -75,39 +75,45 @@ class App extends Component {
 
     render() {
         return (
-            <div>
-                <List />
-                {
-                    this.props.loading ? <div className="loader" /> : null
-                }
-                New task:
-                <input
-                    type="text"
-                    value={this.state.inputValue}
-                    onChange={e => this.handleOnChange(e.target.value)}
-                />
-                <button
-                    type="submit"
-                    onClick={this.handleAddNewTask}
-                >
-                    Add new task
-                </button>
-                <button
-                    type="submit"
-                    onClick={this.props.removeAllTasks}
-                >
-                    Clear list
-                </button>
-                <button
-                    type="submit"
-                    onClick={this.handleCancel}
-                >
-                    Cancel
-                </button>
+            <div className="container" >
+                <div className="layout-add-task" >
+                    <input
+                        className="text-field-input"
+                        type="text"
+                        placeholder="Add new task"
+                        value={this.state.inputValue}
+                        onChange={e => this.handleOnChange(e.target.value)}
+                    />
+                    <button
+                        className="btn-task"
+                        type="submit"
+                        onClick={this.handleAddNewTask}
+                    >
+                        Add
+                    </button>
+                    <button
+                        className="btn-task"
+                        type="submit"
+                        onClick={this.props.removeAllTasks}
+                    >
+                        Clear
+                    </button>
+                    <button
+                        className="btn-task"
+                        type="submit"
+                        onClick={this.handleCancel}
+                    >
+                        Cancel
+                    </button>
+                </div>
                 {
                     this.props.fetching
                         ? <div><div className="loader" /><p>Fetching data</p></div>
                         : null
+                }
+                <List />
+                {
+                    this.props.loading ? <div className="loader" /> : null
                 }
             </div>
         )

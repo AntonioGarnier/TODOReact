@@ -24,10 +24,11 @@ function List({
     markTaskAsDone, // eslint-disable-line no-shadow
 }) {
     return (
-        <ul>
+        <div className="container-list" >
             <TransitionGroup component={null}>
                 {
                     tasks
+                        .reverse()
                         .filter(task => !task.get('done'))
                         .map(task => (
                             <CSSTransition
@@ -38,20 +39,23 @@ function List({
                                 unmountOnExit
                                 mountOnEnter
                             >
-                                <li>
-                                    {task.get('task')}
-                                    <input
-                                        className="checkBoxStyle"
-                                        type="checkbox"
-                                        defaultChecked={task.get('done')}
-                                        onClick={() => markTaskAsDone(task.get('id'))}
-                                    />
-                                </li>
+                                <div className="content-list" >
+                                    <div className="btn-checkbox" >
+                                        <input
+                                            type="checkbox"
+                                            defaultChecked={task.get('done')}
+                                            onClick={() => markTaskAsDone(task.get('id'))}
+                                        />
+                                    </div>
+                                    <div className="added-task" >
+                                        {task.get('task')}
+                                    </div>
+                                </div>
                             </CSSTransition>
                         ))
                 }
             </TransitionGroup>
-        </ul>
+        </div>
     )
 }
 
