@@ -12,6 +12,7 @@ const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
+const postcssPresetEnv = require('postcss-preset-env')
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -192,6 +193,13 @@ module.exports = {
                         // https://github.com/facebookincubator/create-react-app/issues/2677
                         ident: 'postcss',
                         plugins: () => [
+                          require('postcss-nested'),
+                          postcssPresetEnv({
+                            stage: 0,
+                            //features: {
+                              //'nesting-rules': true,
+                            //}
+                          }),
                           require('postcss-flexbugs-fixes'),
                           autoprefixer({
                             browsers: [

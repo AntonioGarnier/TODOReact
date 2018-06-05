@@ -1,6 +1,6 @@
 # Todo-List
 
-[Demo - GH-Pages](https://AntonioGarnier.github.io/Todo-List)
+[Demo - GH-Pages](https://antoniogarnier.github.io/Todo-List/)
 
 [Deployment: GitHub Pages](#github-pages)
 
