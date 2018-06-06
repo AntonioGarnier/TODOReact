@@ -7,7 +7,7 @@ import { rootReducer } from '../reducers'
 import { initializeApp } from '../actions'
 import {
     addTaskToFirebaseEpic,
-    fetchTasksFromFirebase,
+    //fetchTasksFromFirebase,
     initialzeApp,
 } from './epics'
 
@@ -27,7 +27,7 @@ const composeEnhancers =
 
 const rootEpic = combineEpics(
     addTaskToFirebaseEpic,
-    fetchTasksFromFirebase,
+    //fetchTasksFromFirebase,
     initialzeApp,
 )
 

@@ -14,11 +14,12 @@ import {
     GOT_NEW_TASK,
     ADD_NEW_TASK_CANCELLED,
     FETCH_TASKS_FROM_FIREBASE,
-    FETCHING_TASKS_FROM_FIREBASE,
+    // FETCHING_TASKS_FROM_FIREBASE,
     INITIALIZE_APP,
     REMOVE_ALL_TASKS,
     REMOVE_TASK,
     UPDATE_TASK,
+    EMPTY_LIST,
 } from '../../constants'
 
 
@@ -28,7 +29,9 @@ firestore.settings({ timestampsInSnapshots: true })
 const tasksListener$ = new Subject()
 
 firestore.collection('tasks')
+    .orderBy('createdAt')
     .onSnapshot((querySnapshot) => {
+        console.log('DocChanges', querySnapshot.docChanges())
         if (!querySnapshot.metadata.hasPendingWrites) {
             let tasks = Immutable.List()
             let updateType
@@ -37,6 +40,7 @@ firestore.collection('tasks')
                     task: task.doc.data().task,
                     done: task.doc.data().done,
                     id: task.doc.id,
+                    createdAt: task.doc.data().createdAt,
                 }))
                 switch (task.type) {
                     case 'added':
@@ -79,6 +83,7 @@ export const initialzeApp = action$ =>
                                     task: tasks.get(0).get('task'),
                                     done: tasks.get(0).get('done'),
                                     taskId: tasks.get(0).get('id'),
+                                    createdAt: tasks.get(0).get('createdAt'),
                                 },
                             }
                         case 'modified':
@@ -100,13 +105,15 @@ export const initialzeApp = action$ =>
                                 },
                             }
                         default:
-                            break
+                            return {
+                                type: EMPTY_LIST,
+                            }   
                     }
                 })
             ))),
     )
 
-export const fetchTasksFromFirebase = action$ =>
+/*export const fetchTasksFromFirebase = action$ =>
     action$.pipe(
         ofType(FETCHING_TASKS_FROM_FIREBASE),
         flatMap(() => (
@@ -117,6 +124,7 @@ export const fetchTasksFromFirebase = action$ =>
                         task: doc.data().task,
                         done: doc.data().done,
                         id: doc.id,
+                        createdAt: doc.data().createdAt,
                     }))
                 })
                 return {
@@ -127,7 +135,7 @@ export const fetchTasksFromFirebase = action$ =>
                 }
             })
         )),
-    )
+    )*/
 
 export const addTaskToFirebaseEpic = action$ =>
     action$.pipe(
@@ -142,6 +150,7 @@ export const addTaskToFirebaseEpic = action$ =>
                     newTaskRef.set({
                         task: `${action.payload.task} ${act}`,
                         done: false,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     })
                     return {
                         type: GOT_NEW_TASK,
