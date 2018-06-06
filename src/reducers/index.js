@@ -31,6 +31,7 @@ export const rootReducer = (state = initialState, action) => {
                     task: action.payload.task,
                     done: false,
                     id: action.payload.taskId,
+                    createdAt: action.payload.createdAt,
                 })))
         case MARK_TASK_AS_DONE:
             return state

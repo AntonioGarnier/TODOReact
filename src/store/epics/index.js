@@ -147,10 +147,11 @@ export const addTaskToFirebaseEpic = action$ =>
                 take(5),
                 map((act) => {
                     const newTaskRef = firestore.collection('tasks').doc()
+                    const timestamp = firebase.firestore.FieldValue.serverTimestamp()
                     newTaskRef.set({
                         task: `${action.payload.task} ${act}`,
                         done: false,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdAt: timestamp,
                     })
                     return {
                         type: GOT_NEW_TASK,
@@ -158,6 +159,7 @@ export const addTaskToFirebaseEpic = action$ =>
                             task: `${action.payload.task} ${act}`,
                             done: false,
                             taskId: newTaskRef.id,
+                            createdAt: timestamp,
                         },
                     }
                 }),
